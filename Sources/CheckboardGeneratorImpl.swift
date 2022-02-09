@@ -11,7 +11,7 @@ struct CheckboardGeneratorImpl: CheckboardGenerator {
         for userInterfaceStyle: UIUserInterfaceStyle
     ) -> UIImage {
         guard let filter = CIFilter(name: filterName) else {
-            appAssertionFailure()
+            safeCrash()
             return UIImage()
         }
 
@@ -28,7 +28,7 @@ struct CheckboardGeneratorImpl: CheckboardGenerator {
         filter.setValue(width, forKey: "inputWidth")
 
         guard let output = filter.outputImage else {
-            appAssertionFailure()
+            safeCrash()
             return UIImage()
         }
 
@@ -39,7 +39,7 @@ struct CheckboardGeneratorImpl: CheckboardGenerator {
                 size: checkboard.size
             )
         ) else {
-            appAssertionFailure()
+            safeCrash()
             return UIImage()
         }
 
