@@ -1,11 +1,13 @@
 import UIKit
 
 public struct Checkboard: Hashable {
+    public static let defaultWidth: Double = 8
+
     public init(
         size: CGSize,
         firstColor: UIColor = UIColor(light: 0xFFFFFF, dark: 0x606060),
         secondColor: UIColor = UIColor(light: 0xDADADA, dark: 0x383838),
-        width: Double = 8
+        width: Double = Self.defaultWidth
     ) {
         self.size = size
         self.firstColor = firstColor
@@ -14,8 +16,20 @@ public struct Checkboard: Hashable {
     }
 
     public static var fullscreen: Checkboard {
-        Checkboard(
-            size: UIScreen.main.bounds.size
+        let screenSize = UIScreen.main.bounds.size
+        let defaultWidth = Int(defaultWidth)
+
+        var width = Int(screenSize.width).quotientAndRemainder(dividingBy: defaultWidth).quotient * defaultWidth
+        if width < Int(screenSize.width) { width += defaultWidth }
+
+        var height = Int(screenSize.height).quotientAndRemainder(dividingBy: defaultWidth).quotient * defaultWidth
+        if height < Int(screenSize.height) { height += defaultWidth }
+
+        return Checkboard(
+            size: CGSize(
+                width: width,
+                height: height
+            )
         )
     }
 
