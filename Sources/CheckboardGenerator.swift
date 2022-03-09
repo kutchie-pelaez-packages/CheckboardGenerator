@@ -16,11 +16,12 @@ public struct CheckboardGenerator {
             return UIImage()
         }
 
+        let scale = UIScreen.main.scale
         let center = CIVector(x: 0, y: 0)
         let color0 = CIColor(color: checkboard.firstColor.forUserInterfaceStyle(userInterfaceStyle))
         let color1 = CIColor(color: checkboard.secondColor.forUserInterfaceStyle(userInterfaceStyle))
         let sharpness = NSNumber(integerLiteral: 1)
-        let width = checkboard.width as NSNumber
+        let width = checkboard.width * scale as NSNumber
 
         filter.setValue(center, forKey: "inputCenter")
         filter.setValue(color0, forKey: "inputColor0")
@@ -37,7 +38,10 @@ public struct CheckboardGenerator {
             output,
             from: CGRect(
                 origin: .zero,
-                size: checkboard.size
+                size: CGSize(
+                    width: checkboard.size.width * scale,
+                    height: checkboard.size.height * scale
+                )
             )
         ) else {
             safeCrash()
@@ -45,6 +49,9 @@ public struct CheckboardGenerator {
         }
 
         return UIImage(cgImage: cgImage)
+            .scaledPreservingAspectRatio(
+                targetSize: checkboard.size
+            )
     }
 
 
@@ -64,9 +71,18 @@ public struct CheckboardGenerator {
             for: .dark
         )
 
+        let traitsResolver: (UIUserInterfaceStyle) -> UITraitCollection = { userInterfaceStyle in
+            UITraitCollection(
+                traitsFrom: [
+                    UITraitCollection(userInterfaceStyle: userInterfaceStyle),
+                    UITraitCollection(displayScale: UIScreen.main.scale)
+                ]
+            )
+        }
+
         let result = UIImage()
-        result.imageAsset!.register(lightImage, with: .light)
-        result.imageAsset!.register(darkImage, with: .dark)
+        result.imageAsset!.register(lightImage, with: traitsResolver(.light))
+        result.imageAsset!.register(darkImage, with: traitsResolver(.dark))
 
         let preparedImage = result.preparingForDisplay() ?? result
         cache[checkboard.hashValue] = preparedImage
