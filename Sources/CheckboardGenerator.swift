@@ -7,10 +7,7 @@ private let context = CIContext()
 private var cache = [Int: UIImage]()
 
 public struct CheckboardGenerator {
-    private static func generate(
-        _ checkboard: Checkboard,
-        for userInterfaceStyle: UIUserInterfaceStyle
-    ) -> UIImage {
+    private static func generate(_ checkboard: Checkboard, for userInterfaceStyle: UIUserInterfaceStyle) -> UIImage {
         guard let filter = CIFilter(name: filterName) else {
             safeCrash()
             return UIImage()
@@ -49,11 +46,8 @@ public struct CheckboardGenerator {
         }
 
         return UIImage(cgImage: cgImage)
-            .scaledPreservingAspectRatio(
-                targetSize: checkboard.size
-            )
+            .scaledPreservingAspectRatio(targetSize: checkboard.size)
     }
-
 
     // MARK: - CheckboardGenerator
 
@@ -62,14 +56,8 @@ public struct CheckboardGenerator {
             return cachedImage
         }
 
-        let lightImage = generate(
-            checkboard,
-            for: .light
-        )
-        let darkImage = generate(
-            checkboard,
-            for: .dark
-        )
+        let lightImage = generate(checkboard, for: .light)
+        let darkImage = generate(checkboard, for: .dark)
 
         let traitsResolver: (UIUserInterfaceStyle) -> UITraitCollection = { userInterfaceStyle in
             UITraitCollection(
